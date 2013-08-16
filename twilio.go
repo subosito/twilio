@@ -48,6 +48,10 @@ func (t *Twilio) post(u string, v url.Values) (b []byte, status int, err error) 
 
 	status = res.StatusCode
 	b, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, status, err
+	}
+
 	return
 }
 
@@ -61,6 +65,10 @@ func (t *Twilio) get(u string, v url.Values) (b []byte, status int, err error) {
 
 	status = res.StatusCode
 	b, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, status, err
+	}
+
 	return
 }
 

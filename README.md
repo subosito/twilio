@@ -1,12 +1,28 @@
-package twilio_test
+# Twilio
+
+[![Build status](http://goci.me/project/image/github.com/subosito/twilio)](http://goci.me/project/github.com/subosito/twilio)
+
+Simple Twilio API wrapper in Go.
+
+## Usage
+
+As usual you can `go get` the twilio package by issuing:
+
+```bash
+$ go get github.com/subosito/twilio
+```
+
+Then you can use it on your application:
+
+```go
+package main
 
 import (
 	"fmt"
 	"github.com/subosito/twilio"
 )
 
-// This example shows the usage of twilio package. You can get your AccountSid and AuthToken on Account Dashboard page.
-func Example() {
+func main() {
 	// Prepare credentials
 	AccountSid := "ac650108548e09aC2eed18ddb850c20b9"
 	AuthToken := "2ecaf74387cbb28456aad6fb57b5ad682"
@@ -25,3 +41,9 @@ func Example() {
 	fmt.Printf("%+v\n", s)
 	return
 }
+```
+
+## Resources
+
+Documentation: http://godoc.org/github.com/subosito/twilio
+

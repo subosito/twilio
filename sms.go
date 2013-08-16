@@ -49,13 +49,14 @@ func (t *Twilio) SimpleSendSMS(from, to, body string) (*SmsResponse, error) {
 func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *SmsResponse, err error) {
 	endpoint := fmt.Sprintf("%s.%s", t.smsEndpoint(), apiFormat)
 	params := url.Values{}
-	params.Set("From", from)
-	params.Set("To", to)
-	params.Set("Body", body)
 
 	for key, value := range optional {
 		params.Set(key, value)
 	}
+
+	params.Set("From", from)
+	params.Set("To", to)
+	params.Set("Body", body)
 
 	b, status, err := t.post(endpoint, params)
 	if err != nil {
@@ -74,7 +75,7 @@ func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *
 
 	err = json.Unmarshal(b, &s)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	return
@@ -100,7 +101,7 @@ func (t *Twilio) GetSMS(sid string) (s *SmsResponse, err error) {
 
 	err = json.Unmarshal(b, &s)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	return
@@ -135,7 +136,7 @@ func (t *Twilio) ListSMS(filters map[string]string) (sl *SmsListResponse, err er
 
 	err = json.Unmarshal(b, &sl)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	return
