@@ -119,10 +119,10 @@ func (t *Twilio) GetSMS(sid string) (s *SMSResponse, err error) {
 	return
 }
 
-// Returns a list of SMS messages associates with your account. It's support list filters:
-//	To : Only show SMS messages to this phone number
-//	From : Only show SMS messages from this phone number
-//	DateSent : Only show SMS messages sent on this date (in GMT format), given as `YYYY-MM-DD`.
+// Returns a list of SMS messages associates with your account. It's support list filters via `map[string]string`:
+//	"To" : Only show SMS messages to this phone number
+//	"From" : Only show SMS messages from this phone number
+//	"DateSent" : Only show SMS messages sent on this date (in GMT format), given as `YYYY-MM-DD`.
 func (t *Twilio) ListSMS(filters map[string]string) (sl *SMSListResponse, err error) {
 	endpoint := fmt.Sprintf("%s.%s", t.smsEndpoint(), apiFormat)
 	params := url.Values{}

@@ -26,8 +26,8 @@ func Example() {
 	s, err := t.SendSMS(from, to, "Hello Go!", params)
 
 	// or, make a voice call
-	// p := CallParams{Url: callbackUrl}
-	// s, err := w.MakeCall(from, to, p)
+	// params := twilio.CallParams{Url: callbackUrl}
+	// s, err := w.MakeCall(from, to, params)
 
 	if err != nil {
 		fmt.Println(err)
@@ -50,8 +50,8 @@ func ExampleTwilio_MakeCall() {
 	t := twilio.NewTwilio(AccountSid, AuthToken)
 
 	// Voice call
-	p := twilio.CallParams{Url: callbackUrl, Timeout: 90}
-	s, err := t.MakeCall(from, to, p)
+	params := twilio.CallParams{Url: callbackUrl, Timeout: 90}
+	s, err := t.MakeCall(from, to, params)
 
 	if err != nil {
 		fmt.Println(err)

@@ -42,8 +42,8 @@ func main() {
 	s, err := t.SendSMS(from, to, "Hello Go!", params)
 
 	// or, make a voice call
-	// p := twilio.CallParams{Url: callbackUrl}
-	// s, err := w.MakeCall(from, to, p)
+	// params := twilio.CallParams{Url: callbackUrl}
+	// s, err := w.MakeCall(from, to, params)
 
 	if err != nil {
 		fmt.Println(err)
