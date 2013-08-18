@@ -18,6 +18,10 @@ type Twilio struct {
 	AccountSid string
 	AuthToken  string
 	BaseUrl    string
+
+	// Transport is the HTTP transport to use when making requests.
+	// It will default to http.DefaultTransport if nil
+	Transport http.RoundTripper
 }
 
 // Exception holds information about error response returned by Twilio API
@@ -35,7 +39,7 @@ func (e *Exception) Error() string {
 
 func NewTwilio(accountSid, authToken string) *Twilio {
 	baseUrl := fmt.Sprintf("%s/%s", apiHost, apiVersion)
-	return &Twilio{accountSid, authToken, baseUrl}
+	return &Twilio{accountSid, authToken, baseUrl, nil}
 }
 
 func (t *Twilio) post(u string, v url.Values) (b []byte, status int, err error) {
@@ -74,17 +78,25 @@ func (t *Twilio) get(u string, v url.Values) (b []byte, status int, err error) {
 
 func (t *Twilio) request(method string, u string, v url.Values) (*http.Response, error) {
 	req, err := http.NewRequest(method, u, strings.NewReader(v.Encode()))
-
 	if err != nil {
 		return nil, err
 	}
-
-	req.SetBasicAuth(t.AccountSid, t.AuthToken)
 
 	if method == "POST" {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 
-	client := &http.Client{}
+	req.SetBasicAuth(t.AccountSid, t.AuthToken)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Charset", "utf-8")
+
+	if t.Transport == nil {
+		t.Transport = http.DefaultTransport
+	}
+
+	client := &http.Client{
+		Transport: t.Transport,
+	}
+
 	return client.Do(req)
 }
