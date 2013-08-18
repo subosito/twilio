@@ -38,11 +38,11 @@ func main() {
 	// t.Transport = urlfetch.Transport{Context: c}
 
 	// Send SMS
-	params := map[string]string{"StatusCallback": callbackUrl}
+	params := twilio.SMSParams{StatusCallback: callbackUrl}
 	s, err := t.SendSMS(from, to, "Hello Go!", params)
 
 	// or, make a voice call
-	// p := CallParams{Url: callbackUrl}
+	// p := twilio.CallParams{Url: callbackUrl}
 	// s, err := w.MakeCall(from, to, p)
 
 	if err != nil {

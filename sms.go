@@ -38,29 +38,37 @@ type SMSListResponse struct {
 	SMSMessages     []SMSResponse
 }
 
+type SMSParams struct {
+	StatusCallback string
+	ApplicationSid string
+}
+
 func (t *Twilio) smsEndpoint() string {
 	return fmt.Sprintf("%s/Accounts/%s/SMS/Messages", t.BaseUrl, t.AccountSid)
 }
 
 // Simple version of Send SMS with no optional parameters support.
 func (t *Twilio) SimpleSendSMS(from, to, body string) (*SMSResponse, error) {
-	return t.SendSMS(from, to, body, map[string]string{})
+	return t.SendSMS(from, to, body, SMSParams{})
 }
 
 // Send SMS with more verbose options. It's support optional parameters.
 //	StatusCallback : A URL that Twilio will POST to when your message is processed.
 //	ApplicationSid : Twilio will POST `SMSSid` as well as other statuses to the URL in the `SMSStatusCallback` property of this application
-func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *SMSResponse, err error) {
+func (t *Twilio) SendSMS(from, to, body string, p SMSParams) (s *SMSResponse, err error) {
 	endpoint := fmt.Sprintf("%s.%s", t.smsEndpoint(), apiFormat)
 	params := url.Values{}
-
-	for key, value := range optional {
-		params.Set(key, value)
-	}
-
 	params.Set("From", from)
 	params.Set("To", to)
 	params.Set("Body", body)
+
+	if p.StatusCallback != "" {
+		params.Set("StatusCallback", p.StatusCallback)
+	}
+
+	if p.ApplicationSid != "" {
+		params.Set("ApplicationSid", p.ApplicationSid)
+	}
 
 	b, status, err := t.post(endpoint, params)
 	if err != nil {

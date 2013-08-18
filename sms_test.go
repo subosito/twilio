@@ -46,7 +46,7 @@ func TestTwilioUnableSendSMS(t *testing.T) {
 
 func TestTwilioSendSMS(t *testing.T) {
 	w := NewTwilio(accountSid, authToken)
-	s, _ := w.SendSMS(sample["from"], sample["to"], sample["body"], map[string]string{})
+	s, _ := w.SendSMS(sample["from"], sample["to"], sample["body"], SMSParams{})
 
 	if s.AccountSid != accountSid {
 		t.Errorf("s.AccountSid: %s != %s", s.AccountSid, accountSid)
