@@ -43,7 +43,7 @@ func main() {
 
 	// or, make a voice call
 	// params := twilio.CallParams{Url: callbackUrl}
-	// s, err := w.MakeCall(from, to, params)
+	// s, err := t.MakeCall(from, to, params)
 
 	if err != nil {
 		fmt.Println(err)
