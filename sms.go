@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-type SmsResponse struct {
+type SMSResponse struct {
 	AccountSid  string  `json:"account_sid"`
 	ApiVersion  string  `json:"api_version"`
 	Body        string  `json:"body"`
@@ -23,7 +23,7 @@ type SmsResponse struct {
 	Uri         string  `json:"uri"`
 }
 
-type SmsListResponse struct {
+type SMSListResponse struct {
 	Start           int    `json:"start"`
 	Total           int    `json:"total"`
 	NumPages        int    `json:"num_pages"`
@@ -35,18 +35,22 @@ type SmsListResponse struct {
 	LastPageUri     string `json:"last_page_uri"`
 	NextPageUri     string `json:"next_page_uri"`
 	PreviousPageUri string `json:"previous_page_uri"`
-	SmsMessages     []SmsResponse
+	SMSMessages     []SMSResponse
+}
+
+func (t *Twilio) smsEndpoint() string {
+	return fmt.Sprintf("%s/Accounts/%s/SMS/Messages", t.BaseUrl, t.AccountSid)
 }
 
 // Simple version of Send SMS with no optional parameters support.
-func (t *Twilio) SimpleSendSMS(from, to, body string) (*SmsResponse, error) {
+func (t *Twilio) SimpleSendSMS(from, to, body string) (*SMSResponse, error) {
 	return t.SendSMS(from, to, body, map[string]string{})
 }
 
 // Send SMS with more verbose options. It's support optional parameters.
 //	StatusCallback : A URL that Twilio will POST to when your message is processed.
-//	ApplicationSid : Twilio will POST `SmsSid` as well as other statuses to the URL in the `SmsStatusCallback` property of this application
-func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *SmsResponse, err error) {
+//	ApplicationSid : Twilio will POST `SMSSid` as well as other statuses to the URL in the `SMSStatusCallback` property of this application
+func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *SMSResponse, err error) {
 	endpoint := fmt.Sprintf("%s.%s", t.smsEndpoint(), apiFormat)
 	params := url.Values{}
 
@@ -81,7 +85,7 @@ func (t *Twilio) SendSMS(from, to, body string, optional map[string]string) (s *
 	return
 }
 
-func (t *Twilio) GetSMS(sid string) (s *SmsResponse, err error) {
+func (t *Twilio) GetSMS(sid string) (s *SMSResponse, err error) {
 	endpoint := fmt.Sprintf("%s/%s.%s", t.smsEndpoint(), sid, apiFormat)
 
 	b, status, err := t.get(endpoint, url.Values{})
@@ -111,7 +115,7 @@ func (t *Twilio) GetSMS(sid string) (s *SmsResponse, err error) {
 //	To : Only show SMS messages to this phone number
 //	From : Only show SMS messages from this phone number
 //	DateSent : Only show SMS messages sent on this date (in GMT format), given as `YYYY-MM-DD`.
-func (t *Twilio) ListSMS(filters map[string]string) (sl *SmsListResponse, err error) {
+func (t *Twilio) ListSMS(filters map[string]string) (sl *SMSListResponse, err error) {
 	endpoint := fmt.Sprintf("%s.%s", t.smsEndpoint(), apiFormat)
 	params := url.Values{}
 
@@ -140,8 +144,4 @@ func (t *Twilio) ListSMS(filters map[string]string) (sl *SmsListResponse, err er
 	}
 
 	return
-}
-
-func (t *Twilio) smsEndpoint() string {
-	return fmt.Sprintf("%s/Accounts/%s/SMS/Messages", t.BaseUrl, t.AccountSid)
 }

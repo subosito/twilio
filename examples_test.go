@@ -7,9 +7,12 @@ import (
 
 // This example shows the usage of twilio package. You can get your AccountSid and AuthToken on Account Dashboard page.
 func Example() {
-	// Prepare credentials
+	// Common stuffs
 	AccountSid := "ac650108548e09aC2eed18ddb850c20b9"
 	AuthToken := "2ecaf74387cbb28456aad6fb57b5ad682"
+	from := "+15005550006"
+	to := "+62801234567"
+	callbackUrl := "http://subosito.com/"
 
 	// Initialize twilio client
 	t := twilio.NewTwilio(AccountSid, AuthToken)
@@ -19,8 +22,37 @@ func Example() {
 	// t.Transport = urlfetch.Transport{Context: c}
 
 	// Send SMS
-	params := map[string]string{"StatusCallback": "http://example.com/"}
-	s, err := t.SendSMS("+15005550006", "+62821234567", "Hello Go!", params)
+	params := map[string]string{"StatusCallback": callbackUrl}
+	s, err := t.SendSMS(from, to, "Hello Go!", params)
+
+	// or, make a voice call
+	// p := CallParams{Url: callbackUrl}
+	// s, err := w.MakeCall(from, to, p)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%+v\n", s)
+	return
+}
+
+func ExampleTwilio_MakeCall() {
+	// Common stuffs
+	AccountSid := "ac650108548e09aC2eed18ddb850c20b9"
+	AuthToken := "2ecaf74387cbb28456aad6fb57b5ad682"
+	from := "+15005550006"
+	to := "+62801234567"
+	callbackUrl := "http://subosito.com/"
+
+	// Initialize twilio client
+	t := twilio.NewTwilio(AccountSid, AuthToken)
+
+	// Voice call
+	p := twilio.CallParams{Url: callbackUrl, Timeout: 90}
+	s, err := t.MakeCall(from, to, p)
+
 	if err != nil {
 		fmt.Println(err)
 		return
