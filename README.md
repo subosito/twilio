@@ -33,7 +33,7 @@ func main() {
 	// Initialize twilio client
 	t := twilio.NewTwilio(AccountSid, AuthToken)
 
-	// You can set custom Transport, eg: when you're using `appengine/urlfetch` on Google's appengine
+	// You can set custom Transport, eg: you're using `appengine/urlfetch` on Google's appengine
 	// c := appengine.NewContext(r) // r is a *http.Request
 	// t.Transport = urlfetch.Transport{Context: c}
 

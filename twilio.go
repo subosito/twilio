@@ -44,7 +44,6 @@ func NewTwilio(accountSid, authToken string) *Twilio {
 
 func (t *Twilio) post(u string, v url.Values) (b []byte, status int, err error) {
 	res, err := t.request("POST", u, v)
-
 	if err != nil {
 		return
 	}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"errors"
 )
 
 type CallParams struct {
@@ -24,7 +25,7 @@ type CallParams struct {
 	Record               bool
 }
 
-type CallSubresource struct {
+type callSubresource struct {
 	Notifications string `json:"notifications"`
 	Recordings    string `json:"recordings"`
 }
@@ -51,7 +52,7 @@ type CallResponse struct {
 	ForwardedFrom   string          `json:"forwarded_from,omitempty"`
 	CallerName      string          `json:"caller_name,omitempty"`
 	Uri             string          `json:"uri"`
-	SubresourceUris CallSubresource `json:"subresource_uris"`
+	SubresourceUris callSubresource `json:"subresource_uris"`
 }
 
 func (t *Twilio) callEndpoint() string {
@@ -64,6 +65,10 @@ func (t *Twilio) MakeCall(from, to string, p CallParams) (r *CallResponse, err e
 	params := url.Values{}
 	params.Set("From", from)
 	params.Set("To", to)
+
+	if (p.Url == "") && (p.ApplicationSid == "") {
+		return nil, errors.New("One of the Url or ApplicationSid is required.")
+	}
 
 	if p.Url != "" {
 		params.Set("Url", p.Url)

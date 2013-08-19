@@ -14,6 +14,7 @@ var sample = map[string]string{
 	"from": "+15005550006",
 	"to":   "+62821234567",
 	"body": "Hello Go!",
+	"callbackUrl": "http://subosito.com/",
 }
 
 func TestTwilioInvalidAccountForSendingSMS(t *testing.T) {
@@ -54,5 +55,18 @@ func TestTwilioSendSMS(t *testing.T) {
 
 	if s.ApiVersion != apiVersion {
 		t.Errorf("s.ApiVersion: %s != %s", s.ApiVersion, apiVersion)
+	}
+}
+
+func TestTwilioMakeCall(t *testing.T) {
+	w := NewTwilio(accountSid, authToken)
+	r, _ := w.MakeCall(sample["from"], sample["to"], CallParams{Url: sample["callbackUrl"]})
+
+	if r.AccountSid != accountSid {
+		t.Errorf("s.AccountSid: %s != %s", r.AccountSid, accountSid)
+	}
+
+	if r.ApiVersion != apiVersion {
+		t.Errorf("s.ApiVersion: %s != %s", r.ApiVersion, apiVersion)
 	}
 }
