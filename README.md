@@ -1,6 +1,6 @@
 # Twilio
 
-[![Build status](http://goci.me/project/image/github.com/subosito/twilio)](http://goci.me/project/github.com/subosito/twilio)
+[![Build Status](https://travis-ci.org/subosito/twilio.png)](https://travis-ci.org/subosito/twilio)
 
 Simple Twilio API wrapper in Go.
 
