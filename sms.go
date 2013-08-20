@@ -8,19 +8,19 @@ import (
 )
 
 type SMSResponse struct {
-	AccountSid  string  `json:"account_sid"`
-	ApiVersion  string  `json:"api_version"`
-	Body        string  `json:"body"`
-	DateCreated string  `json:"date_created,omitempty"`
-	DateSent    string  `json:"date_sent,omitempty"`
-	DateUpdated string  `json:"date_updated,omitempty"`
-	Direction   string  `json:"direction"`
-	From        string  `json:"from"`
-	Price       float32 `json:"price,omitempty"`
-	Sid         string  `json:"sid"`
-	Status      string  `json:"status"`
-	To          string  `json:"to"`
-	Uri         string  `json:"uri"`
+	AccountSid  string `json:"account_sid"`
+	ApiVersion  string `json:"api_version"`
+	Body        string `json:"body"`
+	DateCreated string `json:"date_created,omitempty"`
+	DateSent    string `json:"date_sent,omitempty"`
+	DateUpdated string `json:"date_updated,omitempty"`
+	Direction   string `json:"direction"`
+	From        string `json:"from"`
+	Price       string `json:"price,omitempty"`
+	Sid         string `json:"sid"`
+	Status      string `json:"status"`
+	To          string `json:"to"`
+	Uri         string `json:"uri"`
 }
 
 type SMSListResponse struct {
@@ -70,7 +70,7 @@ func (t *Twilio) SendSMS(from, to, body string, p SMSParams) (s *SMSResponse, er
 		params.Set("ApplicationSid", p.ApplicationSid)
 	}
 
-	b, status, err := t.post(endpoint, params)
+	b, status, err := t.request("POST", endpoint, params)
 	if err != nil {
 		return
 	}
@@ -96,7 +96,7 @@ func (t *Twilio) SendSMS(from, to, body string, p SMSParams) (s *SMSResponse, er
 func (t *Twilio) GetSMS(sid string) (s *SMSResponse, err error) {
 	endpoint := fmt.Sprintf("%s/%s.%s", t.smsEndpoint(), sid, apiFormat)
 
-	b, status, err := t.get(endpoint, url.Values{})
+	b, status, err := t.request("GET", endpoint, url.Values{})
 	if err != nil {
 		return
 	}
@@ -131,7 +131,7 @@ func (t *Twilio) ListSMS(filters map[string]string) (sl *SMSListResponse, err er
 		params.Set(key, value)
 	}
 
-	b, status, err := t.get(endpoint, params)
+	b, status, err := t.request("GET", endpoint, params)
 	if err != nil {
 		return
 	}

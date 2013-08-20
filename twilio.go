@@ -42,43 +42,18 @@ func NewTwilio(accountSid, authToken string) *Twilio {
 	return &Twilio{accountSid, authToken, baseUrl, nil}
 }
 
-func (t *Twilio) post(u string, v url.Values) (b []byte, status int, err error) {
-	res, err := t.request("POST", u, v)
-	if err != nil {
-		return
-	}
-	defer res.Body.Close()
-
-	status = res.StatusCode
-	b, err = ioutil.ReadAll(res.Body)
-	if err == nil {
-		return b, status, nil
+func (t *Twilio) transport() http.RoundTripper {
+	if t.Transport != nil {
+		return t.Transport
 	}
 
-	return nil, status, err
+	return http.DefaultTransport
 }
 
-func (t *Twilio) get(u string, v url.Values) (b []byte, status int, err error) {
-	res, err := t.request("GET", u, v)
-
-	if err != nil {
-		return
-	}
-	defer res.Body.Close()
-
-	status = res.StatusCode
-	b, err = ioutil.ReadAll(res.Body)
-	if err == nil {
-		return b, status, nil
-	}
-
-	return nil, status, err
-}
-
-func (t *Twilio) request(method string, u string, v url.Values) (*http.Response, error) {
+func (t *Twilio) request(method string, u string, v url.Values) (b []byte, status int, err error) {
 	req, err := http.NewRequest(method, u, strings.NewReader(v.Encode()))
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	if method == "POST" {
@@ -89,13 +64,18 @@ func (t *Twilio) request(method string, u string, v url.Values) (*http.Response,
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Accept-Charset", "utf-8")
 
-	if t.Transport == nil {
-		t.Transport = http.DefaultTransport
+	client := &http.Client{Transport: t.transport()}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, res.StatusCode, err
+	}
+	defer res.Body.Close()
+
+	b, err = ioutil.ReadAll(res.Body)
+	if err == nil {
+		return b, res.StatusCode, nil
 	}
 
-	client := &http.Client{
-		Transport: t.Transport,
-	}
-
-	return client.Do(req)
+	return nil, res.StatusCode, err
 }

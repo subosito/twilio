@@ -2,11 +2,11 @@ package twilio
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
-	"errors"
 )
 
 type CallParams struct {
@@ -45,7 +45,7 @@ type CallResponse struct {
 	StartTime       string          `json:"start_time,omitempty"`
 	EndTime         string          `json:"end_time,omitempty"`
 	Duration        string          `json:"duration,omitempty"`
-	Price           float32         `json:"price,omitempty"`
+	Price           string          `json:"price,omitempty"`
 	Direction       string          `json:"direction"`
 	AnsweredBy      string          `json:"answered_by,omitempty"`
 	ApiVersion      string          `json:"api_version"`
@@ -95,7 +95,7 @@ func (t *Twilio) MakeCall(from, to string, p CallParams) (r *CallResponse, err e
 	params.Set("Timeout", strconv.Itoa(p.Timeout))
 	params.Set("Record", fmt.Sprintf("%t", p.Record))
 
-	b, status, err := t.post(endpoint, params)
+	b, status, err := t.request("POST", endpoint, params)
 	if err != nil {
 		return
 	}

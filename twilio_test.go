@@ -5,21 +5,9 @@ import (
 	"testing"
 )
 
-const (
-	accountSid = "AC65c2ee6fddb57b5ad6818ddb850c20b9"
-	authToken  = "2ecaf0108548e09a74387cbb28456aa2"
-)
-
-var sample = map[string]string{
-	"from": "+15005550006",
-	"to":   "+62821234567",
-	"body": "Hello Go!",
-	"callbackUrl": "http://subosito.com/",
-}
-
 func TestTwilioInvalidAccountForSendingSMS(t *testing.T) {
 	w := NewTwilio(accountSid, "abc")
-	_, err := w.SimpleSendSMS(sample["from"], sample["to"], sample["body"])
+	_, err := w.SimpleSendSMS(from, to, body)
 	e := err.(*Exception)
 
 	if e.Status != http.StatusUnauthorized {
@@ -33,7 +21,7 @@ func TestTwilioInvalidAccountForSendingSMS(t *testing.T) {
 
 func TestTwilioUnableSendSMS(t *testing.T) {
 	w := NewTwilio(accountSid, authToken)
-	_, err := w.SimpleSendSMS(sample["from"], "abc", sample["body"])
+	_, err := w.SimpleSendSMS(from, "abc", body)
 	e := err.(*Exception)
 
 	if e.Status != http.StatusBadRequest {
@@ -47,7 +35,7 @@ func TestTwilioUnableSendSMS(t *testing.T) {
 
 func TestTwilioSendSMS(t *testing.T) {
 	w := NewTwilio(accountSid, authToken)
-	s, _ := w.SendSMS(sample["from"], sample["to"], sample["body"], SMSParams{})
+	s, _ := w.SendSMS(from, to, body, SMSParams{})
 
 	if s.AccountSid != accountSid {
 		t.Errorf("s.AccountSid: %s != %s", s.AccountSid, accountSid)
@@ -58,9 +46,28 @@ func TestTwilioSendSMS(t *testing.T) {
 	}
 }
 
+func TestTwilioGetSMS(t *testing.T) {
+	w := NewTwilio(accountSid, authToken)
+	w.Transport = &RecordingTransport{
+		Transport: http.DefaultTransport,
+		Status:    200,
+		Body:      response["SMS"],
+	}
+
+	r, _ := w.GetSMS("SM800f449d0399ed014aae2bcc0cc2f2ec")
+
+	if r.AccountSid != accountSid {
+		t.Errorf("s.AccountSid: %s != %s", r.AccountSid, accountSid)
+	}
+
+	if r.ApiVersion != apiVersion {
+		t.Errorf("s.ApiVersion: %s != %s", r.ApiVersion, apiVersion)
+	}
+}
+
 func TestTwilioMakeCall(t *testing.T) {
 	w := NewTwilio(accountSid, authToken)
-	r, _ := w.MakeCall(sample["from"], sample["to"], CallParams{Url: sample["callbackUrl"]})
+	r, _ := w.MakeCall(from, to, CallParams{Url: callbackUrl})
 
 	if r.AccountSid != accountSid {
 		t.Errorf("s.AccountSid: %s != %s", r.AccountSid, accountSid)
