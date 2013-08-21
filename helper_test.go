@@ -50,4 +50,34 @@ var response = map[string]string{
 				"to": "+14159978453",
 				"uri": "/2010-04-01/Accounts/AC65c2ee6fddb57b5ad6818ddb850c20b9/SMS/Messages/SM800f449d0399ed014aae2bcc0cc2f2ec.json"
 			}`,
+	"SMSList": ` {
+				"start": 0,
+				"total": 261,
+				"num_pages": 6,
+				"page": 0,
+				"page_size": 50,
+				"end": 49,
+				"uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages.json",
+				"first_page_uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages.json?Page=0&PageSize=50",
+				"last_page_uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages.json?Page=5&PageSize=50",
+				"next_page_uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages.json?Page=1&PageSize=50",
+				"previous_page_uri": null,
+				"sms_messages": [
+					{
+						"account_sid": "AC65c2ee6fddb57b5ad6818ddb850c20b9",
+						"api_version": "2010-04-01",
+						"body": "Morning response!",
+						"date_created": "Mon, 16 Aug 2010 03:45:01 +0000",
+						"date_sent": "Mon, 16 Aug 2010 03:45:03 +0000",
+						"date_updated": "Mon, 16 Aug 2010 03:45:03 +0000",
+						"direction": "outbound-api",
+						"from": "+14158141829",
+						"price": "-0.02000",
+						"sid": "SM800f449d0399ed014aae2bcc0cc2f2ec",
+						"status": "sent",
+						"to": "+14159978453",
+						"uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages/SM800f449d0399ed014aae2bcc0cc2f2ec.json"
+					}
+				]
+			}`,
 }

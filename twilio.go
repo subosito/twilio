@@ -37,6 +37,14 @@ func (e *Exception) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
 
+type CommonResponse struct {
+	Sid         string    `json:"sid"`
+	Status      string    `json:"status"`
+	DateCreated Timestamp `json:"date_created,omitempty"`
+	DateUpdated Timestamp `json:"date_updated,omitempty"`
+	Uri         string    `json:"uri"`
+}
+
 func NewTwilio(accountSid, authToken string) *Twilio {
 	baseUrl := fmt.Sprintf("%s/%s", apiHost, apiVersion)
 	return &Twilio{accountSid, authToken, baseUrl, nil}

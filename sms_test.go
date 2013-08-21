@@ -65,15 +65,17 @@ func TestTwilioGetSMS(t *testing.T) {
 	}
 }
 
-func TestTwilioMakeCall(t *testing.T) {
+func TestTwilioListSMS(t *testing.T) {
 	w := NewTwilio(accountSid, authToken)
-	r, _ := w.MakeCall(from, to, CallParams{Url: callbackUrl})
-
-	if r.AccountSid != accountSid {
-		t.Errorf("s.AccountSid: %s != %s", r.AccountSid, accountSid)
+	w.Transport = &RecordingTransport{
+		Transport: http.DefaultTransport,
+		Status:    200,
+		Body:      response["SMSList"],
 	}
 
-	if r.ApiVersion != apiVersion {
-		t.Errorf("s.ApiVersion: %s != %s", r.ApiVersion, apiVersion)
+	r, _ := w.ListSMS(map[string]string{})
+
+	if start := 0; r.Start != start {
+		t.Errorf("r.Start: %s != %s", r.Start, start)
 	}
 }

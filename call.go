@@ -25,34 +25,28 @@ type CallParams struct {
 	Record               bool
 }
 
-type callSubresource struct {
-	Notifications string `json:"notifications"`
-	Recordings    string `json:"recordings"`
-}
-
 type CallResponse struct {
-	Sid             string          `json:"sid"`
-	DateCreated     string          `json:"date_created,omitempty"`
-	DateUpdated     string          `json:"date_updated,omitempty"`
-	ParentCallSid   string          `json:"parent_call_sid"`
-	AccountSid      string          `json:"account_sid"`
-	To              string          `json:"to"`
-	ToFormatted     string          `json:"to_formatted"`
-	From            string          `json:"from"`
-	FromFormatted   string          `json:"from_formatted"`
-	PhoneNumberSid  string          `json:"phone_number_sid"`
-	Status          string          `json:"status"`
-	StartTime       string          `json:"start_time,omitempty"`
-	EndTime         string          `json:"end_time,omitempty"`
-	Duration        string          `json:"duration,omitempty"`
-	Price           string          `json:"price,omitempty"`
-	Direction       string          `json:"direction"`
-	AnsweredBy      string          `json:"answered_by,omitempty"`
-	ApiVersion      string          `json:"api_version"`
-	ForwardedFrom   string          `json:"forwarded_from,omitempty"`
-	CallerName      string          `json:"caller_name,omitempty"`
-	Uri             string          `json:"uri"`
-	SubresourceUris callSubresource `json:"subresource_uris"`
+	CommonResponse
+	ParentCallSid  string    `json:"parent_call_sid"`
+	AccountSid     string    `json:"account_sid"`
+	To             string    `json:"to"`
+	ToFormatted    string    `json:"to_formatted"`
+	From           string    `json:"from"`
+	FromFormatted  string    `json:"from_formatted"`
+	PhoneNumberSid string    `json:"phone_number_sid"`
+	StartTime      Timestamp `json:"start_time,omitempty"`
+	EndTime        Timestamp `json:"end_time,omitempty"`
+	Duration       string    `json:"duration,omitempty"`
+	Price          Price     `json:"price,omitempty"`
+	Direction      string    `json:"direction"`
+	AnsweredBy     string    `json:"answered_by,omitempty"`
+	ApiVersion     string    `json:"api_version"`
+	ForwardedFrom  string    `json:"forwarded_from,omitempty"`
+	CallerName     string    `json:"caller_name,omitempty"`
+	SubresourceUris struct {
+		Notifications string `json:"notifications"`
+		Recordings    string `json:"recordings"`
+	} `json:"subresource_uris"`
 }
 
 func (t *Twilio) callEndpoint() string {
