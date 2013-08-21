@@ -8,15 +8,19 @@ import (
 )
 
 type SMSResponse struct {
-	CommonResponse
-	AccountSid string    `json:"account_sid"`
-	ApiVersion string    `json:"api_version"`
-	Body       string    `json:"body"`
-	DateSent   Timestamp `json:"date_sent,omitempty"`
-	Direction  string    `json:"direction"`
-	From       string    `json:"from"`
-	Price      Price     `json:"price,omitempty"`
-	To         string    `json:"to"`
+	AccountSid  string    `json:"account_sid"`
+	ApiVersion  string    `json:"api_version"`
+	Body        string    `json:"body"`
+	DateCreated Timestamp `json:"date_created,omitempty"`
+	DateSent    Timestamp `json:"date_sent,omitempty"`
+	DateUpdated Timestamp `json:"date_updated,omitempty"`
+	Direction   string    `json:"direction"`
+	From        string    `json:"from"`
+	Price       Price     `json:"price,omitempty"`
+	Sid         string    `json:"sid"`
+	Status      string    `json:"status"`
+	To          string    `json:"to"`
+	Uri         string    `json:"uri"`
 }
 
 type SMSListResponse struct {

@@ -24,27 +24,6 @@ type Twilio struct {
 	Transport http.RoundTripper
 }
 
-// Exception holds information about error response returned by Twilio API
-type Exception struct {
-	Status   int    `json:"status"`
-	Message  string `json:"message"`
-	Code     int    `json:"code"`
-	MoreInfo string `json:"more_info"`
-}
-
-// Exception implements Error interface
-func (e *Exception) Error() string {
-	return fmt.Sprintf("%d: %s", e.Code, e.Message)
-}
-
-type CommonResponse struct {
-	Sid         string    `json:"sid"`
-	Status      string    `json:"status"`
-	DateCreated Timestamp `json:"date_created,omitempty"`
-	DateUpdated Timestamp `json:"date_updated,omitempty"`
-	Uri         string    `json:"uri"`
-}
-
 func NewTwilio(accountSid, authToken string) *Twilio {
 	baseUrl := fmt.Sprintf("%s/%s", apiHost, apiVersion)
 	return &Twilio{accountSid, authToken, baseUrl, nil}
@@ -59,6 +38,13 @@ func (t *Twilio) transport() http.RoundTripper {
 }
 
 func (t *Twilio) request(method string, u string, v url.Values) (b []byte, status int, err error) {
+	// remove empty value
+	for key, val := range v {
+		if strings.Join(val, "") == "" {
+			v.Del(key)
+		}
+	}
+
 	req, err := http.NewRequest(method, u, strings.NewReader(v.Encode()))
 	if err != nil {
 		return nil, 0, err
