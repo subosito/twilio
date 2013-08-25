@@ -35,7 +35,7 @@ func main() {
 
 	// You can set custom Transport, eg: you're using `appengine/urlfetch` on Google's appengine
 	// c := appengine.NewContext(r) // r is a *http.Request
-	// t.Transport = urlfetch.Transport{Context: c}
+	// t.Transport = &urlfetch.Transport{Context: c}
 
 	// Send SMS
 	params := twilio.SMSParams{StatusCallback: callbackUrl}
