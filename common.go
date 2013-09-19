@@ -2,27 +2,8 @@ package twilio
 
 import (
 	"encoding/json"
-	"fmt"
-	"net/url"
 	"time"
 )
-
-type Parameter interface {
-	urlValues() url.Values
-}
-
-// Exception holds information about error response returned by Twilio API
-type Exception struct {
-	Status   int    `json:"status"`
-	Message  string `json:"message"`
-	Code     int    `json:"code"`
-	MoreInfo string `json:"more_info"`
-}
-
-// Exception implements Error interface
-func (e *Exception) Error() string {
-	return fmt.Sprintf("%d: %s", e.Code, e.Message)
-}
 
 type Pagination struct {
 	Start           int    `json:"start"`
@@ -36,15 +17,6 @@ type Pagination struct {
 	LastPageUri     string `json:"last_page_uri"`
 	NextPageUri     string `json:"next_page_uri"`
 	PreviousPageUri string `json:"previous_page_uri"`
-}
-
-func unquote(b []byte) string {
-	switch b[0] {
-	case '"':
-		return string(b[1 : len(b)-1])
-	default:
-		return string(b)
-	}
 }
 
 type Price float32
@@ -70,4 +42,13 @@ func (m *Timestamp) UnmarshalJSON(b []byte) error {
 
 	*m = Timestamp(t)
 	return nil
+}
+
+func unquote(b []byte) string {
+	switch b[0] {
+	case '"':
+		return string(b[1 : len(b)-1])
+	default:
+		return string(b)
+	}
 }
