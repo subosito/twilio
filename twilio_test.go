@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
+	"time"
 )
 
 const (
@@ -38,9 +39,20 @@ func encodeAuth() string {
 	return ("Basic " + base64.StdEncoding.EncodeToString([]byte(s)))
 }
 
+func parseTimestamp(s string) Timestamp {
+	tm, _ := time.Parse(time.RFC1123Z, s)
+	return Timestamp{Time: tm}
+}
+
+func testMethod(t *testing.T, r *http.Request, want string) {
+	if want != r.Method {
+		t.Errorf("Request method = %v, want %v", r.Method, want)
+	}
+}
+
 func TestNewClient(t *testing.T) {
 	c := NewClient(accountSid, authToken, nil)
-	baseURL := "https://api.twilio.com/2010-04-01"
+	baseURL := "https://api.twilio.com"
 
 	if c.BaseURL.String() != baseURL {
 		t.Errorf("NewClient BaseURL = %q, want %q", c.BaseURL.String(), baseURL)
@@ -55,7 +67,7 @@ func TestNewRequest(t *testing.T) {
 	c := NewClient(accountSid, authToken, nil)
 
 	inURL := "/foo"
-	outURL := baseURL().String() + "/foo"
+	outURL := c.BaseURL.String() + "/foo"
 
 	req, _ := c.NewRequest("GET", inURL, nil)
 

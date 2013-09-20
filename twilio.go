@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
+	"time"
 )
 
 const (
@@ -25,62 +27,74 @@ type Client struct {
 	// User agent used when communicating with Twilio API
 	UserAgent string
 
-	// Base URL for API requests
-	BaseURL *url.URL
-
 	AccountSid string
 	AuthToken  string
 
 	// Services used for communicating with different parts of the Twilio API
-	Message *MessageService
+	Messages *MessageService
+
+	BaseURL *url.URL
 }
 
-func baseURL() *url.URL {
-	baseURL, _ := url.Parse(fmt.Sprintf("%s/%s", apiBaseURL, apiVersion))
-	return baseURL
-}
+func NewClient(accountSid, authToken string, httpClient *http.Client) *Client {
+	if httpClient == nil {
+		tr := &http.Transport{
+			ResponseHeaderTimeout: time.Duration(3050) * time.Millisecond,
+		}
 
-func NewClient(accountSid, authToken string, client *http.Client) *Client {
-	if client == nil {
-		client = http.DefaultClient
+		httpClient = &http.Client{Transport: tr}
 	}
 
+	baseURL, _ := url.Parse(apiBaseURL)
+
 	c := &Client{
-		client:     client,
+		client:     httpClient,
 		UserAgent:  userAgent,
 		AccountSid: accountSid,
 		AuthToken:  authToken,
-		BaseURL:    baseURL(),
+		BaseURL:    baseURL,
 	}
 
-	c.Message = &MessageService{client: c}
+	c.Messages = &MessageService{client: c}
 
 	return c
 }
 
-func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Request, error) {
-	rel, err := url.Parse(urlStr)
+func (c *Client) endpoint(parts ...string) (*url.URL, error) {
+	up := []string{apiVersion, "Accounts", c.AccountSid}
+	up = append(up, parts...)
+	u, err := url.Parse(strings.Join(up, "/"))
 	if err != nil {
 		return nil, err
 	}
 
-	u := c.BaseURL
-	u.Path = u.Path + rel.Path
+	u.Path = fmt.Sprintf("/%s.%s", u.Path, apiFormat)
+
+	return u, nil
+}
+
+func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Request, error) {
+	ul, err := url.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	u := c.BaseURL.ResolveReference(ul)
 
 	req, err := http.NewRequest(method, u.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	if method == "POST" {
+	if method == "POST" || method == "PUT" {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 
 	req.SetBasicAuth(c.AccountSid, c.AuthToken)
 
 	req.Header.Add("User-Agent", c.UserAgent)
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Accept-Charset", "utf-8")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Accept-Charset", "utf-8")
 
 	return req, nil
 }

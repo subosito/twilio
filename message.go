@@ -2,7 +2,6 @@ package twilio
 
 import (
 	"errors"
-	"fmt"
 	"net/url"
 	"strings"
 )
@@ -17,7 +16,7 @@ type Message struct {
 	Body        string    `json:"body"`
 	NumSegments int       `json:"num_segments,string"`
 	NumMedia    int       `json:"num_media,string"`
-	DateCreated Timestamp `json:"date_created,omitempty"`
+	DateCreated Timestamp `json:"date_created,string,omitempty"`
 	DateSent    Timestamp `json:"date_sent,omitempty"`
 	DateUpdated Timestamp `json:"date_updated,omitempty"`
 	Direction   string    `json:"direction"`
@@ -52,10 +51,6 @@ func (p MessageParams) values() url.Values {
 	return structToValues(&p)
 }
 
-func (s *MessageService) endpoint() string {
-	return fmt.Sprintf("/Accounts/%s/Messages", s.client.AccountSid)
-}
-
 // Shortcut for sending SMS with no optional parameters support.
 func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, error) {
 	return s.Send(from, to, MessageParams{Body: body})
@@ -73,9 +68,12 @@ func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, er
 //	StatusCallback : A URL that Twilio will POST to when your message is processed.
 //	ApplicationSid : Twilio will POST `MessageSid` as well as other statuses to the URL in the `MessageStatusCallback` property of this application
 func (s *MessageService) Send(from, to string, params MessageParams) (*Message, *Response, error) {
-	u := fmt.Sprintf("%s.%s", s.endpoint(), apiFormat)
+	u, err := s.client.endpoint("Messages")
+	if err != nil {
+		return nil, nil, err
+	}
 
-	err := params.validates()
+	err = params.validates()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -84,7 +82,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 	v.Set("From", from)
 	v.Set("To", to)
 
-	req, err := s.client.NewRequest("POST", u, strings.NewReader(v.Encode()))
+	req, err := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -99,9 +97,12 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 }
 
 func (s *MessageService) Get(sid string) (*Message, *Response, error) {
-	u := fmt.Sprintf("%s/%s.%s", s.endpoint(), sid, apiFormat)
+	u, err := s.client.endpoint("Messages", sid)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	req, err := s.client.NewRequest("GET", u, nil)
+	req, err := s.client.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -132,10 +133,14 @@ func (p MessageListParams) values() url.Values {
 }
 
 func (s *MessageService) List(params MessageListParams) (*MessageList, *Response, error) {
-	u := fmt.Sprintf("%s.%s", s.endpoint(), apiFormat)
+	u, err := s.client.endpoint("Messages")
+	if err != nil {
+		return nil, nil, err
+	}
+
 	v := params.values()
 
-	req, err := s.client.NewRequest("GET", u, strings.NewReader(v.Encode()))
+	req, err := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
 	if err != nil {
 		return nil, nil, err
 	}
