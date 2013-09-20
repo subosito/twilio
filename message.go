@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"reflect"
 	"strings"
 )
 
@@ -50,22 +49,7 @@ func (p MessageParams) validates() error {
 }
 
 func (p MessageParams) values() url.Values {
-	v := make(url.Values)
-
-	fields := reflect.TypeOf(&p).Elem()
-	values := reflect.ValueOf(p)
-	num := fields.NumField()
-
-	for i := 0; i < num; i++ {
-		key := fields.FieldByIndex([]int{i}).Name
-		val := values.Field(i).String()
-
-		if val != "" {
-			v.Set(key, val)
-		}
-	}
-
-	return v
+	return structToValues(&p)
 }
 
 func (s *MessageService) endpoint() string {
@@ -143,20 +127,7 @@ type MessageListParams struct {
 }
 
 func (p MessageListParams) values() url.Values {
-	v := make(url.Values)
-
-	fields := reflect.TypeOf(&p).Elem()
-	values := reflect.ValueOf(p)
-	num := fields.NumField()
-
-	for i := 0; i < num; i++ {
-		key := fields.FieldByIndex([]int{i}).Name
-		val := values.Field(i).String()
-
-		v.Set(key, val)
-	}
-
-	return v
+	return structToValues(&p)
 }
 
 func (s *MessageService) List(params MessageListParams) (*MessageList, *Response, error) {
