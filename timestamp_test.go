@@ -1,8 +1,8 @@
 package twilio
 
 import (
-	"time"
 	"testing"
+	"time"
 )
 
 func TestTimestamp_IsZero(t *testing.T) {

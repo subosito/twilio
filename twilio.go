@@ -15,8 +15,8 @@ const (
 	apiBaseURL = "https://api.twilio.com"
 	apiVersion = "2010-04-01"
 	apiFormat  = "json"
-	version   = "0.1.0"
-	userAgent = "subosito/twilio//" + version
+	version    = "0.1.0"
+	userAgent  = "subosito/twilio//" + version
 )
 
 // A client manages communication with Twilio API
@@ -110,6 +110,12 @@ func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Reques
 // Wraps http.Response. So we can add more functionalities later.
 type Response struct {
 	*http.Response
+	Pagination
+}
+
+func NewResponse(r *http.Response) *Response {
+	response := &Response{Response: r}
+	return response
 }
 
 func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
@@ -120,7 +126,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 
 	defer resp.Body.Close()
 
-	response := &Response{resp}
+	response := NewResponse(resp)
 
 	err = checkResponse(resp)
 	if err != nil {
@@ -159,20 +165,6 @@ func checkResponse(r *http.Response) error {
 	}
 
 	return exception
-}
-
-type Pagination struct {
-	Page            int    `json:"page"`
-	NumPages        int    `json:"num_pages"`
-	PageSize        int    `json:"page_size"`
-	Total           int    `json:"total"`
-	Start           int    `json:"start"`
-	End             int    `json:"end"`
-	Uri             string `json:"uri"`
-	FirstPageUri    string `json:"first_page_uri"`
-	PreviousPageUri string `json:"previous_page_uri"`
-	NextPageUri     string `json:"next_page_uri"`
-	LastPageUri     string `json:"last_page_uri"`
 }
 
 type ListParams struct {

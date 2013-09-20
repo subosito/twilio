@@ -120,11 +120,6 @@ func (s *MessageService) Get(sid string) (*Message, *Response, error) {
 	return m, resp, err
 }
 
-type MessageList struct {
-	Pagination
-	Messages []Message
-}
-
 type MessageListParams struct {
 	To       string
 	From     string
@@ -132,7 +127,7 @@ type MessageListParams struct {
 	ListParams
 }
 
-func (s *MessageService) List(params MessageListParams) (*MessageList, *Response, error) {
+func (s *MessageService) List(params MessageListParams) ([]Message, *Response, error) {
 	u, err := s.client.EndPoint("Messages")
 	if err != nil {
 		return nil, nil, err
@@ -145,11 +140,19 @@ func (s *MessageService) List(params MessageListParams) (*MessageList, *Response
 		return nil, nil, err
 	}
 
-	ml := new(MessageList)
-	resp, err := s.client.Do(req, ml)
+	// Helper struct for handling the listing
+	type list struct {
+		Pagination
+		Messages []Message `json:"messages"`
+	}
+
+	l := new(list)
+	resp, err := s.client.Do(req, l)
 	if err != nil {
 		return nil, resp, err
 	}
 
-	return ml, resp, err
+	resp.Pagination = l.Pagination
+
+	return l.Messages, resp, err
 }

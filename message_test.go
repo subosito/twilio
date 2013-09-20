@@ -8,6 +8,18 @@ import (
 	"testing"
 )
 
+func TestMessage_IsSent(t *testing.T) {
+	m := &Message{Status: "sent"}
+	if !m.IsSent() {
+		t.Error("Message.IsSent() should be true")
+	}
+
+	s := &Message{Status: "queued"}
+	if s.IsSent() {
+		t.Error("Message.IsSent() should be false")
+	}
+}
+
 func TestMessageService_Create(t *testing.T) {
 	setup()
 	defer teardown()
@@ -232,7 +244,7 @@ func TestMessageService_List(t *testing.T) {
 	u, _ := client.EndPoint("Messages")
 
 	output := `{
-		"page": 0,
+		"page": 1,
 		"page_size": 50,
 		"uri": "foo.json",
 		"messages": [{ "sid": "MM90c6fc909d8504d45ecdb3a3d5b3556e" }]
@@ -243,36 +255,27 @@ func TestMessageService_List(t *testing.T) {
 		fmt.Fprint(w, output)
 	})
 
-	ml, _, err := client.Messages.List(MessageListParams{})
+	ml, r, err := client.Messages.List(MessageListParams{})
 
 	if err != nil {
 		t.Error("Get() err expected to be nil")
 	}
 
-	want := &MessageList{
-		Pagination: Pagination{
-			Page:     0,
-			PageSize: 50,
-			Uri:      "foo.json",
-		},
-		Messages: []Message{
-			Message{Sid: "MM90c6fc909d8504d45ecdb3a3d5b3556e"},
-		},
+	rwant := Pagination{
+		Page:     1,
+		PageSize: 50,
+		Uri:      "foo.json",
+	}
+
+	if !reflect.DeepEqual(r.Pagination, rwant) {
+		t.Errorf("response.Pagination returned %+v, want %+v", r.Pagination, rwant)
+	}
+
+	want := []Message{
+		Message{Sid: "MM90c6fc909d8504d45ecdb3a3d5b3556e"},
 	}
 
 	if !reflect.DeepEqual(ml, want) {
 		t.Errorf("Message.List returned %+v, want %+v", ml, want)
-	}
-}
-
-func TestMessage_IsSent(t *testing.T) {
-	m := &Message{Status: "sent"}
-	if !m.IsSent() {
-		t.Error("Message.IsSent() should be true")
-	}
-
-	s := &Message{Status: "queued"}
-	if s.IsSent() {
-		t.Error("Message.IsSent() should be false")
 	}
 }
