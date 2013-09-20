@@ -12,7 +12,7 @@ func TestMessageService_Create(t *testing.T) {
 	setup()
 	defer teardown()
 
-	endpoint, _ := client.endpoint("Messages")
+	endpoint, _ := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -55,7 +55,7 @@ func TestMessageService_Send(t *testing.T) {
 	setup()
 	defer teardown()
 
-	endpoint, _ := client.endpoint("Messages")
+	endpoint, _ := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -96,7 +96,7 @@ func TestMessageService_SendSMS(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.endpoint("Messages")
+	u, _ := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -133,7 +133,7 @@ func TestMessageService_Send_incompleteParams(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.endpoint("Messages")
+	u, _ := client.EndPoint("Messages")
 
 	output := `{
 		"status": 400,
@@ -170,7 +170,7 @@ func TestMessageService_Get(t *testing.T) {
 	defer teardown()
 
 	sid := "MM90c6fc909d8504d45ecdb3a3d5b3556e"
-	u, _ := client.endpoint("Messages", sid)
+	u, _ := client.EndPoint("Messages", sid)
 
 	output := `{
 		"account_sid": "AC5ef8732a3c49700934481addd5ce1659",
@@ -187,7 +187,7 @@ func TestMessageService_Get(t *testing.T) {
 		"sid": "MM90c6fc909d8504d45ecdb3a3d5b3556e",
 		"status": "queued",
 		"to": "+15558675309",
-		"uri": "/2010-04-01/Accounts/AC5ef8732a3c49700934481addd5ce1659/Messages/MM90c6fc909d8504d45ecdb3a3d5b3556e.json"
+		"uri": "/2010-04-01/Accounts/AC5ef87/Messages/MM90c6.json"
 	}`
 
 	mux.HandleFunc(u.String(), func(w http.ResponseWriter, r *http.Request) {
@@ -217,7 +217,7 @@ func TestMessageService_Get(t *testing.T) {
 		Sid:         "MM90c6fc909d8504d45ecdb3a3d5b3556e",
 		Status:      "queued",
 		To:          "+15558675309",
-		Uri:         "/2010-04-01/Accounts/AC5ef8732a3c49700934481addd5ce1659/Messages/MM90c6fc909d8504d45ecdb3a3d5b3556e.json",
+		Uri:         "/2010-04-01/Accounts/AC5ef87/Messages/MM90c6.json",
 	}
 
 	if !reflect.DeepEqual(m, want) {
@@ -229,13 +229,12 @@ func TestMessageService_List(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.endpoint("Messages")
+	u, _ := client.EndPoint("Messages")
 
 	output := `{
 		"page": 0,
 		"page_size": 50,
-		"end": 49,
-		"uri": "/2010-04-01/Accounts/ACc51860f991f74032b73fdc58841d39fa/Messages.json",
+		"uri": "foo.json",
 		"messages": [{ "sid": "MM90c6fc909d8504d45ecdb3a3d5b3556e" }]
 	}`
 
@@ -254,13 +253,26 @@ func TestMessageService_List(t *testing.T) {
 		Pagination: Pagination{
 			Page:     0,
 			PageSize: 50,
-			End:      49,
-			Uri:      "/2010-04-01/Accounts/ACc51860f991f74032b73fdc58841d39fa/Messages.json",
+			Uri:      "foo.json",
 		},
-		Messages: []Message{Message{Sid: "MM90c6fc909d8504d45ecdb3a3d5b3556e"}},
+		Messages: []Message{
+			Message{Sid: "MM90c6fc909d8504d45ecdb3a3d5b3556e"},
+		},
 	}
 
 	if !reflect.DeepEqual(ml, want) {
 		t.Errorf("Message.List returned %+v, want %+v", ml, want)
+	}
+}
+
+func TestMessage_IsSent(t *testing.T) {
+	m := &Message{Status: "sent"}
+	if !m.IsSent() {
+		t.Error("Message.IsSent() should be true")
+	}
+
+	s := &Message{Status: "queued"}
+	if s.IsSent() {
+		t.Error("Message.IsSent() should be false")
 	}
 }

@@ -28,6 +28,10 @@ type Message struct {
 	Uri         string    `json:"uri"`
 }
 
+func (m *Message) IsSent() bool {
+	return m.Status == "sent"
+}
+
 type MessageParams struct {
 	// The text of the message you want to send, limited to 1600 characters.
 	Body string
@@ -47,12 +51,8 @@ func (p MessageParams) validates() error {
 	return nil
 }
 
-func (p MessageParams) values() url.Values {
-	return structToValues(&p)
-}
-
 func (s *MessageService) Create(v url.Values) (*Message, *Response, error) {
-	u, err := s.client.endpoint("Messages")
+	u, err := s.client.EndPoint("Messages")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -93,7 +93,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 		return nil, nil, err
 	}
 
-	v := params.values()
+	v := structToValues(&params)
 	v.Set("From", from)
 	v.Set("To", to)
 
@@ -101,7 +101,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 }
 
 func (s *MessageService) Get(sid string) (*Message, *Response, error) {
-	u, err := s.client.endpoint("Messages", sid)
+	u, err := s.client.EndPoint("Messages", sid)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -132,17 +132,13 @@ type MessageListParams struct {
 	ListParams
 }
 
-func (p MessageListParams) values() url.Values {
-	return structToValues(&p)
-}
-
 func (s *MessageService) List(params MessageListParams) (*MessageList, *Response, error) {
-	u, err := s.client.endpoint("Messages")
+	u, err := s.client.EndPoint("Messages")
 	if err != nil {
 		return nil, nil, err
 	}
 
-	v := params.values()
+	v := structToValues(&params)
 
 	req, err := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
 	if err != nil {

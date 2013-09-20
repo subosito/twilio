@@ -34,3 +34,7 @@ func (t *Timestamp) UnmarshalJSON(b []byte) (err error) {
 
 	return nil
 }
+
+func (t *Timestamp) IsZero() bool {
+	return t.Time.IsZero()
+}

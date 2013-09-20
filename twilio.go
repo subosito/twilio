@@ -12,14 +12,14 @@ import (
 )
 
 const (
-	version   = "0.1.0"
-	userAgent = "subosito/twilio//" + version
-
 	apiBaseURL = "https://api.twilio.com"
 	apiVersion = "2010-04-01"
 	apiFormat  = "json"
+	version   = "0.1.0"
+	userAgent = "subosito/twilio//" + version
 )
 
+// A client manages communication with Twilio API
 type Client struct {
 	// HTTP client used to communicate with API
 	client *http.Client
@@ -27,15 +27,18 @@ type Client struct {
 	// User agent used when communicating with Twilio API
 	UserAgent string
 
-	AccountSid string
-	AuthToken  string
-
 	// Services used for communicating with different parts of the Twilio API
 	Messages *MessageService
 
+	// The Twilio API base URL
 	BaseURL *url.URL
+
+	// Credentials which is used for authentication during API request
+	AccountSid string
+	AuthToken  string
 }
 
+// NewClient returns a new Twilio API client. This will load default http.Client if httpClient is nil.
 func NewClient(accountSid, authToken string, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		tr := &http.Transport{
@@ -60,7 +63,12 @@ func NewClient(accountSid, authToken string, httpClient *http.Client) *Client {
 	return c
 }
 
-func (c *Client) endpoint(parts ...string) (*url.URL, error) {
+// Constructing API endpoint. This will returns an *url.URL. Here's the example:
+//
+//	c := NewClient("1234567", "token", nil)
+//	c.EndPoint("Messages", "abcdef") // "/2010-04-01/Accounts/1234567/Messages/abcdef.json"
+//
+func (c *Client) EndPoint(parts ...string) (*url.URL, error) {
 	up := []string{apiVersion, "Accounts", c.AccountSid}
 	up = append(up, parts...)
 	u, err := url.Parse(strings.Join(up, "/"))
