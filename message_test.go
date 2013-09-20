@@ -3,8 +3,8 @@ package twilio
 import (
 	"fmt"
 	"net/http"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestMessageService_Send(t *testing.T) {
@@ -153,4 +153,3 @@ func TestMessageService_List(t *testing.T) {
 		t.Errorf("MessageList.Total = %d, want %d", ml.Total, total)
 	}
 }
-

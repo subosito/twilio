@@ -1,9 +1,9 @@
 package twilio
 
 import (
-	"testing"
 	"net/url"
 	"reflect"
+	"testing"
 )
 
 func TestStructToValues(t *testing.T) {
