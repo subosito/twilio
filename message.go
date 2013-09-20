@@ -16,6 +16,8 @@ type Message struct {
 	AccountSid  string    `json:"account_sid"`
 	ApiVersion  string    `json:"api_version"`
 	Body        string    `json:"body"`
+	NumSegments int       `json:"num_segments,string"`
+	NumMedia    int       `json:"num_media,string"`
 	DateCreated Timestamp `json:"date_created,omitempty"`
 	DateSent    Timestamp `json:"date_sent,omitempty"`
 	DateUpdated Timestamp `json:"date_updated,omitempty"`
@@ -58,7 +60,9 @@ func (p MessageParams) values() url.Values {
 		key := fields.FieldByIndex([]int{i}).Name
 		val := values.Field(i).String()
 
-		v.Set(key, val)
+		if val != "" {
+			v.Set(key, val)
+		}
 	}
 
 	return v
@@ -68,8 +72,8 @@ func (s *MessageService) endpoint() string {
 	return fmt.Sprintf("/Accounts/%s/Messages", s.client.AccountSid)
 }
 
-// Shorcut for sending SMS with no optional parameters support.
-func (s *MessageService) SimpleSendSMS(from, to, body string) (*Message, *Response, error) {
+// Shortcut for sending SMS with no optional parameters support.
+func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, error) {
 	return s.Send(from, to, MessageParams{Body: body})
 }
 

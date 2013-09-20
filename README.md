@@ -22,28 +22,25 @@ import (
 	"github.com/subosito/twilio"
 )
 
+var (
+	AccountSid = "AC5ef8732a3c49700934481addd5ce1659"
+	AuthToken  = "2ecaf0108548e09a74387cbb28456aa2"
+)
+
 func main() {
-	// Common stuffs
-	AccountSid := "ac650108548e09aC2eed18ddb850c20b9"
-	AuthToken := "2ecaf74387cbb28456aad6fb57b5ad682"
-	from := "+15005550006"
-	to := "+62801234567"
-	callbackUrl := "http://subosito.com/"
-
 	// Initialize twilio client
-	t := twilio.NewTwilio(AccountSid, AuthToken)
+	c := twilio.NewClient(AccountSid, AuthToken, nil)
 
-	// You can set custom Transport, eg: you're using `appengine/urlfetch` on Google's appengine
-	// c := appengine.NewContext(r) // r is a *http.Request
-	// t.Transport = &urlfetch.Transport{Context: c}
+	// You can set custom Client, eg: you're using `appengine/urlfetch` on Google's appengine
+	// a := appengine.NewContext(r) // r is a *http.Request
+	// f := urlfetch.Client(c)
+	// c := twilio.NewClient(AccountSid, AuthToken, f)
 
-	// Send SMS
-	params := twilio.SMSParams{StatusCallback: callbackUrl}
-	s, err := t.SendSMS(from, to, "Hello Go!", params)
-
-	// or, make a voice call
-	// params := twilio.CallParams{Url: callbackUrl}
-	// s, err := t.MakeCall(from, to, params)
+	// Send Message
+	params := twilio.MessageParams{
+		Body: "Hello Go!",
+	}
+	s, err := c.Message.Send("+15005550006", "+62801234567", params)
 
 	if err != nil {
 		fmt.Println(err)
