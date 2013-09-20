@@ -3,9 +3,53 @@ package twilio
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"reflect"
 	"testing"
 )
+
+func TestMessageService_Create(t *testing.T) {
+	setup()
+	defer teardown()
+
+	endpoint, _ := client.endpoint("Messages")
+
+	output := `{
+		"sid": "abcdef",
+		"num_media": "1",
+		"price": "0.74",
+		"date_sent": null
+	}`
+
+	mux.HandleFunc(endpoint.String(), func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		fmt.Fprint(w, output)
+	})
+
+	v := url.Values{
+		"From":     {"+14158141829"},
+		"To":       {"+15558675309"},
+		"Body":     {"I love you <3"},
+		"MediaUrl": {"http://www.example.com/hearts.png"},
+	}
+
+	m, _, err := client.Messages.Create(v)
+
+	if err != nil {
+		t.Errorf("Message.Send returned error: %q", err)
+	}
+
+	want := &Message{
+		Sid:      "abcdef",
+		NumMedia: 1,
+		Price:    Price{0.74},
+		DateSent: Timestamp{},
+	}
+
+	if !reflect.DeepEqual(m, want) {
+		t.Errorf("Message.Create() returned %+v, want %+v", m, want)
+	}
+}
 
 func TestMessageService_Send(t *testing.T) {
 	setup()

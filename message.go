@@ -51,6 +51,26 @@ func (p MessageParams) values() url.Values {
 	return structToValues(&p)
 }
 
+func (s *MessageService) Create(v url.Values) (*Message, *Response, error) {
+	u, err := s.client.endpoint("Messages")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	m := new(Message)
+	resp, err := s.client.Do(req, m)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return m, resp, err
+}
+
 // Shortcut for sending SMS with no optional parameters support.
 func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, error) {
 	return s.Send(from, to, MessageParams{Body: body})
@@ -68,12 +88,7 @@ func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, er
 //	StatusCallback : A URL that Twilio will POST to when your message is processed.
 //	ApplicationSid : Twilio will POST `MessageSid` as well as other statuses to the URL in the `MessageStatusCallback` property of this application
 func (s *MessageService) Send(from, to string, params MessageParams) (*Message, *Response, error) {
-	u, err := s.client.endpoint("Messages")
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = params.validates()
+	err := params.validates()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -82,18 +97,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 	v.Set("From", from)
 	v.Set("To", to)
 
-	req, err := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
-	if err != nil {
-		return nil, nil, err
-	}
-
-	m := new(Message)
-	resp, err := s.client.Do(req, m)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return m, resp, err
+	return s.Create(v)
 }
 
 func (s *MessageService) Get(sid string) (*Message, *Response, error) {
