@@ -1,6 +1,7 @@
 # Twilio
 
-[![Build Status](https://travis-ci.org/subosito/twilio.png)](https://travis-ci.org/subosito/twilio)
+[![Build Status](https://drone.io/github.com/subosito/twilio/status.png)](https://drone.io/github.com/subosito/twilio/latest)
+[![Coverage Status](https://coveralls.io/repos/subosito/twilio/badge.png?branch=master)](https://coveralls.io/r/subosito/twilio?branch=master)
 
 Simple Twilio API wrapper in Go.
 
@@ -33,7 +34,7 @@ func main() {
 
 	// You can set custom Client, eg: you're using `appengine/urlfetch` on Google's appengine
 	// a := appengine.NewContext(r) // r is a *http.Request
-	// f := urlfetch.Client(c)
+	// f := urlfetch.Client(a)
 	// c := twilio.NewClient(AccountSid, AuthToken, f)
 
 	// Send Message
@@ -55,4 +56,8 @@ func main() {
 ## Resources
 
 Documentation: http://godoc.org/github.com/subosito/twilio
+
+## Status
+
+Under heavy development. Please be patient :)
 
