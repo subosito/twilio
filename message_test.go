@@ -71,7 +71,7 @@ func TestMessageService_Send(t *testing.T) {
 
 	params := MessageParams{
 		Body:     "I love you <3",
-		MediaUrl: "http://www.example.com/hearts.png",
+		MediaUrl: []string{"http://www.example.com/hearts.png"},
 	}
 
 	m, _, err := client.Messages.Send("+14158141829", "+15558675309", params)

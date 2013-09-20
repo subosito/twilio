@@ -41,15 +41,20 @@ func main() {
 	params := twilio.MessageParams{
 		Body: "Hello Go!",
 	}
-	s, err := c.Message.Send("+15005550006", "+62801234567", params)
-
-	if err != nil {
-		fmt.Println(err)
-		return
+	s, err := c.Messages.Send("+15005550006", "+62801234567", params)
+	if err == nil {
+		fmt.Printf("%+v\n", s)
 	}
 
-	fmt.Printf("%+v\n", s)
-	return
+	// You can also using lower level function: Create
+	s, err := c.Messages.Create(url.Values{
+		"From": {"+15005550006"},
+		"To" :  {"+62801234567"},
+		"Body": {"Hello Go!"},
+	})
+	if err == nil {
+		fmt.Printf("%+v\n", s)
+	}
 }
 ```
 

@@ -33,14 +33,14 @@ type MessageParams struct {
 	Body string
 
 	// The URL of the media you wish to send out with the message. Currently support: gif, png, and jpeg.
-	MediaUrl string
+	MediaUrl []string
 
 	StatusCallback string
 	ApplicationSid string
 }
 
 func (p MessageParams) validates() error {
-	if (p.Body == "") && (p.MediaUrl == "") {
+	if (p.Body == "") && (len(p.MediaUrl) == 0) {
 		return errors.New(`One of the "Body" or "MediaUrl" is required.`)
 	}
 

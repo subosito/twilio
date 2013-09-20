@@ -13,15 +13,20 @@ func structToValues(i interface{}) (v url.Values) {
 
 	for i := 0; i < ival.NumField(); i++ {
 		f := ival.Field(i)
+		k := tp.Field(i).Name
+		it := f.Interface()
 
-		var val string
+		switch reflect.TypeOf(it).Kind() {
+		case reflect.Slice:
+			s := reflect.ValueOf(it)
 
-		switch f.Interface().(type) {
-		case string:
-			val = f.String()
+			for ix := 0; ix < s.Len(); ix++ {
+				v.Add(k, s.Index(ix).String())
+			}
+
+		case reflect.String:
+			v.Set(k, f.String())
 		}
-
-		v.Set(tp.Field(i).Name, val)
 	}
 
 	return
