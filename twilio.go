@@ -85,6 +85,7 @@ func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Reques
 	return req, nil
 }
 
+// Wraps http.Response. So we can add more functionalities later.
 type Response struct {
 	*http.Response
 }
@@ -139,20 +140,19 @@ func checkResponse(r *http.Response) error {
 }
 
 type Pagination struct {
-	Start           int    `json:"start"`
-	Total           int    `json:"total"`
-	NumPages        int    `json:"num_pages"`
 	Page            int    `json:"page"`
+	NumPages        int    `json:"num_pages"`
 	PageSize        int    `json:"page_size"`
+	Total           int    `json:"total"`
+	Start           int    `json:"start"`
 	End             int    `json:"end"`
 	Uri             string `json:"uri"`
 	FirstPageUri    string `json:"first_page_uri"`
-	LastPageUri     string `json:"last_page_uri"`
-	NextPageUri     string `json:"next_page_uri"`
 	PreviousPageUri string `json:"previous_page_uri"`
+	NextPageUri     string `json:"next_page_uri"`
+	LastPageUri     string `json:"last_page_uri"`
 }
 
 type ListParams struct {
-	Page     int
 	PageSize int
 }

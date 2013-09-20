@@ -63,7 +63,7 @@ func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, er
 
 // Send Message with options. It's support required and optional parameters.
 //
-// One of these parameter is required:
+// One of these parameters is required:
 //
 //	Body     : The text of the message you want to send
 //	MediaUrl : The URL of the media you wish to send out with the message. Currently support: gif, png, and jpeg.
@@ -124,6 +124,7 @@ type MessageListParams struct {
 	To       string
 	From     string
 	DateSent string
+	ListParams
 }
 
 func (p MessageListParams) values() url.Values {
@@ -132,7 +133,6 @@ func (p MessageListParams) values() url.Values {
 
 func (s *MessageService) List(params MessageListParams) (*MessageList, *Response, error) {
 	u := fmt.Sprintf("%s.%s", s.endpoint(), apiFormat)
-
 	v := params.values()
 
 	req, err := s.client.NewRequest("GET", u, strings.NewReader(v.Encode()))
