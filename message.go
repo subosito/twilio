@@ -124,7 +124,7 @@ type MessageListParams struct {
 	To       string
 	From     string
 	DateSent string
-	ListParams
+	PageSize int
 }
 
 func (s *MessageService) List(params MessageListParams) ([]Message, *Response, error) {

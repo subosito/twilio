@@ -166,7 +166,3 @@ func checkResponse(r *http.Response) error {
 
 	return exception
 }
-
-type ListParams struct {
-	PageSize int
-}
