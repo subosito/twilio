@@ -16,13 +16,7 @@ func (p *Price) UnmarshalJSON(b []byte) (err error) {
 		return nil
 	}
 
-	var ustr string
-
-	ustr, err = strconv.Unquote(str)
-	if err != nil {
-		ustr = str
-	}
-
+	ustr, _ := strconv.Unquote(str)
 	f, err := strconv.ParseFloat(ustr, 32)
 	if err == nil {
 		*p = Price{float32(f)}

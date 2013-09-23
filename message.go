@@ -43,7 +43,7 @@ type MessageParams struct {
 	ApplicationSid string
 }
 
-func (p MessageParams) validates() error {
+func (p MessageParams) Validates() error {
 	if (p.Body == "") && (len(p.MediaUrl) == 0) {
 		return errors.New(`One of the "Body" or "MediaUrl" is required.`)
 	}
@@ -52,10 +52,7 @@ func (p MessageParams) validates() error {
 }
 
 func (s *MessageService) Create(v url.Values) (*Message, *Response, error) {
-	u, err := s.client.EndPoint("Messages")
-	if err != nil {
-		return nil, nil, err
-	}
+	u := s.client.EndPoint("Messages")
 
 	req, err := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
 	if err != nil {
@@ -88,7 +85,7 @@ func (s *MessageService) SendSMS(from, to, body string) (*Message, *Response, er
 //	StatusCallback : A URL that Twilio will POST to when your message is processed.
 //	ApplicationSid : Twilio will POST `MessageSid` as well as other statuses to the URL in the `MessageStatusCallback` property of this application
 func (s *MessageService) Send(from, to string, params MessageParams) (*Message, *Response, error) {
-	err := params.validates()
+	err := params.Validates()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -101,10 +98,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 }
 
 func (s *MessageService) Get(sid string) (*Message, *Response, error) {
-	u, err := s.client.EndPoint("Messages", sid)
-	if err != nil {
-		return nil, nil, err
-	}
+	u := s.client.EndPoint("Messages", sid)
 
 	req, err := s.client.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -128,11 +122,7 @@ type MessageListParams struct {
 }
 
 func (s *MessageService) List(params MessageListParams) ([]Message, *Response, error) {
-	u, err := s.client.EndPoint("Messages")
-	if err != nil {
-		return nil, nil, err
-	}
-
+	u := s.client.EndPoint("Messages")
 	v := structToValues(&params)
 
 	req, err := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))

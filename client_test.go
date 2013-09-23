@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	accountSid = "AC5ef8732a3c49700934481addd5ce1659"
-	authToken  = "2ecaf0108548e09a74387cbb28456aa2"
+	accountSid = "AC5ef87"
+	authToken  = "2ecaf01"
 )
 
 var (
@@ -143,5 +143,37 @@ func TestDo_httpError(t *testing.T) {
 
 	if err == nil {
 		t.Error("Expected HTTP 400 errror.")
+	}
+}
+
+func TestDo_redirectLoop(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/", http.StatusFound)
+	})
+
+	req, _ := client.NewRequest("GET", "/", nil)
+	_, err := client.Do(req, nil)
+
+	if err == nil {
+		t.Error("Expected error to be returned.")
+	}
+
+	if err, ok := err.(*url.Error); !ok {
+		t.Errorf("Expected a URL error; got %#v.", err)
+	}
+}
+
+func TestEndPoint(t *testing.T) {
+	setup()
+	defer teardown()
+
+	u := client.EndPoint("Hello", "123")
+	want, _ := url.Parse("/2010-04-01/Accounts/AC5ef87/Hello/123.json")
+
+	if !reflect.DeepEqual(u, want) {
+		t.Errorf("EndPoint returned %+v, want %+v", u, want)
 	}
 }

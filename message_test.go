@@ -20,11 +20,20 @@ func TestMessage_IsSent(t *testing.T) {
 	}
 }
 
+func TestMessageParams_Validates(t *testing.T) {
+	m := &MessageParams{}
+
+	err := m.Validates()
+	if err == nil {
+		t.Error("Message.Validates expected an error to be returned")
+	}
+}
+
 func TestMessageService_Create(t *testing.T) {
 	setup()
 	defer teardown()
 
-	endpoint, _ := client.EndPoint("Messages")
+	u := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -33,7 +42,7 @@ func TestMessageService_Create(t *testing.T) {
 		"date_sent": null
 	}`
 
-	mux.HandleFunc(endpoint.String(), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(u.String(), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 		fmt.Fprint(w, output)
 	})
@@ -67,7 +76,7 @@ func TestMessageService_Send(t *testing.T) {
 	setup()
 	defer teardown()
 
-	endpoint, _ := client.EndPoint("Messages")
+	u := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -76,7 +85,7 @@ func TestMessageService_Send(t *testing.T) {
 		"date_sent": null
 	}`
 
-	mux.HandleFunc(endpoint.String(), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(u.String(), func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 		fmt.Fprint(w, output)
 	})
@@ -108,7 +117,7 @@ func TestMessageService_SendSMS(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.EndPoint("Messages")
+	u := client.EndPoint("Messages")
 
 	output := `{
 		"sid": "abcdef",
@@ -145,7 +154,7 @@ func TestMessageService_Send_incompleteParams(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.EndPoint("Messages")
+	u := client.EndPoint("Messages")
 
 	output := `{
 		"status": 400,
@@ -182,7 +191,7 @@ func TestMessageService_Get(t *testing.T) {
 	defer teardown()
 
 	sid := "MM90c6fc909d8504d45ecdb3a3d5b3556e"
-	u, _ := client.EndPoint("Messages", sid)
+	u := client.EndPoint("Messages", sid)
 
 	output := `{
 		"account_sid": "AC5ef8732a3c49700934481addd5ce1659",
@@ -241,7 +250,7 @@ func TestMessageService_List(t *testing.T) {
 	setup()
 	defer teardown()
 
-	u, _ := client.EndPoint("Messages")
+	u := client.EndPoint("Messages")
 
 	output := `{
 		"page": 1,
