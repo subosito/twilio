@@ -2,6 +2,7 @@ package twilio
 
 import (
 	"errors"
+	un "github.com/subosito/underscore"
 	"net/url"
 	"strings"
 )
@@ -90,7 +91,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 		return nil, nil, err
 	}
 
-	v := structToValues(&params)
+	v := un.StructToMap(&params)
 	v.Set("From", from)
 	v.Set("To", to)
 
@@ -123,7 +124,7 @@ type MessageListParams struct {
 
 func (s *MessageService) List(params MessageListParams) ([]Message, *Response, error) {
 	u := s.client.EndPoint("Messages")
-	v := structToValues(&params)
+	v := un.StructToMap(&params)
 
 	req, err := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
 	if err != nil {
