@@ -55,10 +55,7 @@ func (p MessageParams) Validates() error {
 func (s *MessageService) Create(v url.Values) (*Message, *Response, error) {
 	u := s.client.EndPoint("Messages")
 
-	req, err := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
-	if err != nil {
-		return nil, nil, err
-	}
+	req, _ := s.client.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
 
 	m := new(Message)
 	resp, err := s.client.Do(req, m)
@@ -101,10 +98,7 @@ func (s *MessageService) Send(from, to string, params MessageParams) (*Message, 
 func (s *MessageService) Get(sid string) (*Message, *Response, error) {
 	u := s.client.EndPoint("Messages", sid)
 
-	req, err := s.client.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	req, _ := s.client.NewRequest("GET", u.String(), nil)
 
 	m := new(Message)
 	resp, err := s.client.Do(req, m)
@@ -126,10 +120,7 @@ func (s *MessageService) List(params MessageListParams) ([]Message, *Response, e
 	u := s.client.EndPoint("Messages")
 	v := un.StructToMap(&params)
 
-	req, err := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
-	if err != nil {
-		return nil, nil, err
-	}
+	req, _ := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
 
 	// Helper struct for handling the listing
 	type list struct {

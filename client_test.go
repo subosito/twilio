@@ -10,10 +10,9 @@ import (
 
 func TestNewClient(t *testing.T) {
 	c := NewClient(accountSid, authToken, nil)
-	baseURL := "https://api.twilio.com"
 
-	if c.BaseURL.String() != baseURL {
-		t.Errorf("NewClient BaseURL = %q, want %q", c.BaseURL.String(), baseURL)
+	if c.BaseURL.String() != apiBaseURL {
+		t.Errorf("NewClient BaseURL = %q, want %q", c.BaseURL.String(), apiBaseURL)
 	}
 
 	if c.UserAgent != userAgent {

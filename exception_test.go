@@ -17,7 +17,7 @@ func TestException(t *testing.T) {
 	ex := new(Exception)
 	err := json.Unmarshal([]byte(data), &ex)
 	if err != nil {
-		t.Errorf("json.Unmarshal Pagination returned an error %+v", err)
+		t.Errorf("json.Unmarshal returned an error %+v", err)
 	}
 
 	want := &Exception{
@@ -40,9 +40,9 @@ func TestException_Error(t *testing.T) {
 		MoreInfo: "http://www.twilio.com/docs/errors/21201",
 	}
 
-	want := "400: No to number is specified."
+	want := "21201: No to number is specified"
 
-	if ex.Error() == want {
+	if ex.Error() != want {
 		t.Errorf("Exception.Error returned %q, want %q", ex.Error(), want)
 	}
 }

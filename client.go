@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 // A client manages communication with Twilio API
@@ -18,25 +17,21 @@ type Client struct {
 	// User agent used when communicating with Twilio API
 	UserAgent string
 
-	// Services used for communicating with different parts of the Twilio API
-	Messages *MessageService
-
 	// The Twilio API base URL
 	BaseURL *url.URL
 
 	// Credentials which is used for authentication during API request
 	AccountSid string
 	AuthToken  string
+
+	// Services used for communicating with different parts of the Twilio API
+	Messages *MessageService
 }
 
 // NewClient returns a new Twilio API client. This will load default http.Client if httpClient is nil.
 func NewClient(accountSid, authToken string, httpClient *http.Client) *Client {
 	if httpClient == nil {
-		tr := &http.Transport{
-			ResponseHeaderTimeout: time.Duration(3050) * time.Millisecond,
-		}
-
-		httpClient = &http.Client{Transport: tr}
+		httpClient = http.DefaultClient
 	}
 
 	baseURL, _ := url.Parse(apiBaseURL)
@@ -44,9 +39,9 @@ func NewClient(accountSid, authToken string, httpClient *http.Client) *Client {
 	c := &Client{
 		client:     httpClient,
 		UserAgent:  userAgent,
+		BaseURL:    baseURL,
 		AccountSid: accountSid,
 		AuthToken:  authToken,
-		BaseURL:    baseURL,
 	}
 
 	c.Messages = &MessageService{client: c}
@@ -75,10 +70,7 @@ func (c *Client) NewRequest(method, urlStr string, body io.Reader) (*http.Reques
 
 	u := c.BaseURL.ResolveReference(ul)
 
-	req, err := http.NewRequest(method, u.String(), body)
-	if err != nil {
-		return nil, err
-	}
+	req, _ := http.NewRequest(method, u.String(), body)
 
 	if method == "POST" || method == "PUT" {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")

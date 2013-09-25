@@ -150,6 +150,17 @@ func TestMessageService_SendSMS(t *testing.T) {
 	}
 }
 
+func TestMessageService_Send_requiredParams(t *testing.T) {
+	setup()
+	defer teardown()
+
+	_, _, err := client.Messages.Send("+14158141829", "+15558675309", MessageParams{})
+
+	if err == nil {
+		t.Error("Send with MessageParams{} expected to be returned an error")
+	}
+}
+
 func TestMessageService_Send_incompleteParams(t *testing.T) {
 	setup()
 	defer teardown()
@@ -246,6 +257,23 @@ func TestMessageService_Get(t *testing.T) {
 	}
 }
 
+func TestMessageService_Get_httpError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	u := client.EndPoint("Messages", "abc")
+
+	mux.HandleFunc(u.String(), func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	})
+
+	_, _, err := client.Messages.Get("abc")
+
+	if err == nil {
+		t.Error("Expected HTTP 400 errror.")
+	}
+}
+
 func TestMessageService_List(t *testing.T) {
 	setup()
 	defer teardown()
@@ -286,5 +314,22 @@ func TestMessageService_List(t *testing.T) {
 
 	if !reflect.DeepEqual(ml, want) {
 		t.Errorf("Message.List returned %+v, want %+v", ml, want)
+	}
+}
+
+func TestMessageService_List_httpError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	u := client.EndPoint("Messages")
+
+	mux.HandleFunc(u.String(), func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+	})
+
+	_, _, err := client.Messages.List(MessageListParams{})
+
+	if err == nil {
+		t.Error("Expected HTTP 400 errror.")
 	}
 }
