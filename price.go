@@ -24,3 +24,7 @@ func (p *Price) UnmarshalJSON(b []byte) (err error) {
 
 	return err
 }
+
+func (p *Price) Float64() float64 {
+	return float64(p.float32)
+}

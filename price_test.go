@@ -43,3 +43,12 @@ func TestPrice_UnmarshalJSON_null(t *testing.T) {
 		t.Errorf("Price.UnmarshalJSON returned %+v, want %+v", p, want)
 	}
 }
+
+func TestPrice_Float64(t *testing.T) {
+	p := &Price{0.75}
+	want := float64(0.75)
+
+	if p.Float64() != want {
+		t.Errorf("Float64 returned %+v, want %+v", p.Float64(), want)
+	}
+}
