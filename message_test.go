@@ -63,7 +63,7 @@ func TestMessageService_Create(t *testing.T) {
 	want := &Message{
 		Sid:      "abcdef",
 		NumMedia: 1,
-		Price:    Price{0.74},
+		Price:    0.74,
 		DateSent: Timestamp{},
 	}
 
@@ -104,7 +104,7 @@ func TestMessageService_Send(t *testing.T) {
 	want := &Message{
 		Sid:      "abcdef",
 		NumMedia: 1,
-		Price:    Price{0.74},
+		Price:    0.74,
 		DateSent: Timestamp{},
 	}
 
@@ -141,7 +141,7 @@ func TestMessageService_SendSMS(t *testing.T) {
 	want := &Message{
 		Sid:         "abcdef",
 		NumMedia:    0,
-		Price:       Price{0.74},
+		Price:       0.74,
 		DateCreated: tm,
 	}
 
@@ -245,7 +245,7 @@ func TestMessageService_Get(t *testing.T) {
 		DateUpdated: tm,
 		Direction:   "outbound-api",
 		From:        "+14158141829",
-		Price:       Price{0},
+		Price:       0,
 		Sid:         "MM90c6fc909d8504d45ecdb3a3d5b3556e",
 		Status:      "queued",
 		To:          "+15558675309",

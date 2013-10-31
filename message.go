@@ -17,7 +17,7 @@ type Message struct {
 	Body        string    `json:"body"`
 	NumSegments int       `json:"num_segments,string"`
 	NumMedia    int       `json:"num_media,string"`
-	DateCreated Timestamp `json:"date_created,string,omitempty"`
+	DateCreated Timestamp `json:"date_created,omitempty"`
 	DateSent    Timestamp `json:"date_sent,omitempty"`
 	DateUpdated Timestamp `json:"date_updated,omitempty"`
 	Direction   string    `json:"direction"`

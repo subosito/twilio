@@ -4,27 +4,21 @@ import (
 	"strconv"
 )
 
-type Price struct {
-	float32
-}
+type Price float64
 
 func (p *Price) UnmarshalJSON(b []byte) (err error) {
 	str := string(b)
 
 	if str == "null" {
-		*p = Price{float32(0)}
+		*p = 0
 		return nil
 	}
 
 	ustr, _ := strconv.Unquote(str)
-	f, err := strconv.ParseFloat(ustr, 32)
+	f, err := strconv.ParseFloat(ustr, 64)
 	if err == nil {
-		*p = Price{float32(f)}
+		*p = Price(f)
 	}
 
 	return err
-}
-
-func (p *Price) Float64() float64 {
-	return float64(p.float32)
 }
