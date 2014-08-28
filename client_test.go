@@ -2,22 +2,16 @@ package twilio
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/url"
-	"reflect"
 	"testing"
 )
 
 func TestNewClient(t *testing.T) {
 	c := NewClient(accountSid, authToken, nil)
-
-	if c.BaseURL.String() != apiBaseURL {
-		t.Errorf("NewClient BaseURL = %q, want %q", c.BaseURL.String(), apiBaseURL)
-	}
-
-	if c.UserAgent != userAgent {
-		t.Errorf("NewClient UserAgent = %q, want %q", c.UserAgent, userAgent)
-	}
+	assert.Equal(t, c.BaseURL.String(), apiBaseURL)
+	assert.Equal(t, c.UserAgent, userAgent)
 }
 
 func TestNewRequest(t *testing.T) {
@@ -28,37 +22,22 @@ func TestNewRequest(t *testing.T) {
 
 	req, _ := c.NewRequest("GET", inURL, nil)
 
-	// test that URL was expanded
-	if req.URL.String() != outURL {
-		t.Errorf("NewRequest(%q) URL = %q, want %q", inURL, req.URL, outURL)
-	}
-
-	// test that default user-agent is attached to the Request
 	userAgent := req.Header.Get("User-Agent")
-	if c.UserAgent != userAgent {
-		t.Errorf("NewRequest() User-Agent = %q, want %q", userAgent, c.UserAgent)
-	}
-
-	// Test that basic authentication is attached to the Request
-	authHash := encodeAuth()
-	authHeader := req.Header.Get("Authorization")
-	if authHeader != authHash {
-		t.Errorf("NewRequest() Authorization = %q, want %q", authHeader, authHash)
-	}
+	assert.Equal(t, userAgent, c.UserAgent)
+	assert.Equal(t, req.URL.String(), outURL)
+	assert.Equal(t, req.Header.Get("Authorization"), encodeAuth())
 }
 
 func TestNewRequest_badURL(t *testing.T) {
 	c := NewClient(accountSid, authToken, nil)
 
 	_, err := c.NewRequest("GET", ":", nil)
+	assert.NotNil(t, err)
 
-	if err == nil {
-		t.Error("Expected error to be returned")
-	}
-
-	if err, ok := err.(*url.Error); !ok || err.Op != "parse" {
-		t.Errorf("Expected URL parse error, got %+v", err)
-	}
+	erx, ok := err.(*url.Error)
+	assert.True(t, ok)
+	assert.NotNil(t, erx)
+	assert.Equal(t, erx.Op, "parse")
 }
 
 func TestDo(t *testing.T) {
@@ -82,9 +61,7 @@ func TestDo(t *testing.T) {
 	client.Do(req, body)
 
 	want := &foo{"bar"}
-	if !reflect.DeepEqual(body, want) {
-		t.Errorf("Response body = %v, want %v", body, want)
-	}
+	assert.Equal(t, body, want)
 }
 
 func TestDo_httpError(t *testing.T) {
@@ -97,10 +74,7 @@ func TestDo_httpError(t *testing.T) {
 
 	req, _ := client.NewRequest("GET", "/", nil)
 	_, err := client.Do(req, nil)
-
-	if err == nil {
-		t.Error("Expected HTTP 400 errror.")
-	}
+	assert.NotNil(t, err)
 }
 
 func TestDo_redirectLoop(t *testing.T) {
@@ -113,14 +87,11 @@ func TestDo_redirectLoop(t *testing.T) {
 
 	req, _ := client.NewRequest("GET", "/", nil)
 	_, err := client.Do(req, nil)
+	assert.NotNil(t, err)
 
-	if err == nil {
-		t.Error("Expected error to be returned.")
-	}
-
-	if err, ok := err.(*url.Error); !ok {
-		t.Errorf("Expected a URL error; got %#v.", err)
-	}
+	err, ok := err.(*url.Error)
+	assert.True(t, ok)
+	assert.NotNil(t, err)
 }
 
 func TestEndPoint(t *testing.T) {
@@ -129,8 +100,5 @@ func TestEndPoint(t *testing.T) {
 
 	u := client.EndPoint("Hello", "123")
 	want, _ := url.Parse("/2010-04-01/Accounts/AC5ef87/Hello/123.json")
-
-	if !reflect.DeepEqual(u, want) {
-		t.Errorf("EndPoint returned %+v, want %+v", u, want)
-	}
+	assert.Equal(t, u, want)
 }

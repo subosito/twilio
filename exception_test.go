@@ -2,7 +2,7 @@ package twilio
 
 import (
 	"encoding/json"
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -16,9 +16,7 @@ func TestException(t *testing.T) {
 
 	ex := new(Exception)
 	err := json.Unmarshal([]byte(data), &ex)
-	if err != nil {
-		t.Errorf("json.Unmarshal returned an error %+v", err)
-	}
+	assert.Nil(t, err)
 
 	want := &Exception{
 		Status:   400,
@@ -27,9 +25,7 @@ func TestException(t *testing.T) {
 		MoreInfo: "http://www.twilio.com/docs/errors/21201",
 	}
 
-	if !reflect.DeepEqual(ex, want) {
-		t.Errorf("Exception returned %+v, want %+v", ex, want)
-	}
+	assert.Equal(t, ex, want)
 }
 
 func TestException_Error(t *testing.T) {
@@ -41,8 +37,5 @@ func TestException_Error(t *testing.T) {
 	}
 
 	want := "21201: No to number is specified"
-
-	if ex.Error() != want {
-		t.Errorf("Exception.Error returned %q, want %q", ex.Error(), want)
-	}
+	assert.Equal(t, ex.Error(), want)
 }
