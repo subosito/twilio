@@ -2,6 +2,7 @@
 
 [![Build Status](https://drone.io/github.com/subosito/twilio/status.png)](https://drone.io/github.com/subosito/twilio/latest)
 [![Coverage Status](https://coveralls.io/repos/subosito/twilio/badge.png?branch=master)](https://coveralls.io/r/subosito/twilio?branch=master)
+[![GoDoc](https://godoc.org/github.com/subosito/twilio?status.svg)](https://godoc.org/github.com/subosito/twilio)
 
 Simple Twilio API wrapper in Go.
 
@@ -59,12 +60,4 @@ func main() {
 	}
 }
 ```
-
-## Resources
-
-Documentation: http://godoc.org/github.com/subosito/twilio
-
-## Status
-
-Under heavy development. Please be patient :)
 
