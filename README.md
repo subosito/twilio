@@ -19,7 +19,9 @@ Then you can use it on your application:
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/url"
+
 	"github.com/subosito/twilio"
 )
 
@@ -41,19 +43,19 @@ func main() {
 	params := twilio.MessageParams{
 		Body: "Hello Go!",
 	}
-	s, err := c.Messages.Send("+15005550006", "+62801234567", params)
+	s, response, err := c.Messages.Send("+15005550006", "+62801234567", params)
 	if err == nil {
-		fmt.Printf("%+v\n", s)
+		log.Fatal(s, response, err)
 	}
 
 	// You can also using lower level function: Create
-	s, err := c.Messages.Create(url.Values{
+	s, response, err = c.Messages.Create(url.Values{
 		"From": {"+15005550006"},
-		"To" :  {"+62801234567"},
+		"To":   {"+62801234567"},
 		"Body": {"Hello Go!"},
 	})
 	if err == nil {
-		fmt.Printf("%+v\n", s)
+		log.Fatal(s, response, err)
 	}
 }
 ```
