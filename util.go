@@ -25,7 +25,7 @@ func CheckResponse(r *http.Response) error {
 
 func structToUrlValues(i interface{}) url.Values {
 	v := url.Values{}
-	m := StructToMapString(i)
+	m := structToMapString(i)
 	for k, s := range m {
 		switch {
 		case len(s) == 1:
@@ -40,8 +40,8 @@ func structToUrlValues(i interface{}) url.Values {
 	return v
 }
 
-// StructToMapString converts struct as map string
-func StructToMapString(i interface{}) map[string][]string {
+// structToMapString converts struct as map string
+func structToMapString(i interface{}) map[string][]string {
 	ms := map[string][]string{}
 	iv := reflect.ValueOf(i).Elem()
 	tp := iv.Type()

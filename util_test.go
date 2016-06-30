@@ -68,5 +68,5 @@ func TestStructToMapString(t *testing.T) {
 		"SliceInt":    []string{"1", "2", "3"},
 	}
 
-	assert.Equal(t, w, StructToMapString(&st))
+	assert.Equal(t, w, structToMapString(&st))
 }
