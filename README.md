@@ -1,7 +1,7 @@
 # Twilio
 
-[![Build Status](https://drone.io/github.com/subosito/twilio/status.png)](https://drone.io/github.com/subosito/twilio/latest)
-[![Coverage Status](https://coveralls.io/repos/subosito/twilio/badge.png?branch=master)](https://coveralls.io/r/subosito/twilio?branch=master)
+[![Build Status](https://travis-ci.org/subosito/twilio.svg?branch=master)](https://travis-ci.org/subosito/twilio)
+[![Coverage Status](https://img.shields.io/codecov/c/github/subosito/twilio.svg)](https://codecov.io/gh/subosito/twilio)
 [![GoDoc](https://godoc.org/github.com/subosito/twilio?status.svg)](https://godoc.org/github.com/subosito/twilio)
 
 Simple Twilio API wrapper in Go.
