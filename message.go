@@ -119,7 +119,18 @@ func (s *MessageService) List(params MessageListParams) ([]Message, *Response, e
 	u := s.client.EndPoint("Messages")
 	v := structToUrlValues(&params)
 
-	req, _ := s.client.NewRequest("GET", u.String(), strings.NewReader(v.Encode()))
+	req, _ := s.client.NewRequest("GET", u.String(), nil)
+
+	// params are url query params
+	q := req.URL.Query()
+	for k, vals := range v {
+		for _, v := range vals {
+			if v != "" { // only set for non blank values
+				q.Add(k, v)
+			}
+		}
+	}
+	req.URL.RawQuery = q.Encode()
 
 	// Helper struct for handling the listing
 	type list struct {
